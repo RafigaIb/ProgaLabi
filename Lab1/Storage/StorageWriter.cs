@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lab1_v2.Storage
+namespace Lab1.Storage
 {
     public class StorageWriter: IStorageWriter
     {

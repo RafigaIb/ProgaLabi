@@ -1,8 +1,8 @@
-﻿using Lab1_v2.CommandsInterface;
-using Lab1_v2.CommandsOperation;
-using Lab1_v2.ScreenNotificator;
-using Lab1_v2.Storage;
-using Lab1_v2.TurtleObject;
+﻿using Lab1.CommandsInterface;
+using Lab1.CommandsOperation;
+using Lab1.ScreenNotificator;
+using Lab1.Storage;
+using Lab1.TurtleObject;
 using System.Linq;
 
 internal class Program
@@ -22,7 +22,6 @@ internal class Program
         var storageWriterForFigures = new StorageWriter(filePathFigures);
 
 
-        var reader = new CommandReader();
         var manager = new CommandManager(storageReader, storageReaderForFigures);
         var invoker = new CommandInvoker(turtle);
         var checker = new NewFigureChecker(turtle, storageWriterForFigures);
@@ -56,7 +55,7 @@ internal class Program
         {
             try
             {
-                userCommand = reader.Read();
+                userCommand = Console.ReadLine();
 
                 if (userCommand == Exit)
                 {

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1_v2.Commands;
+using Lab1.Commands;
 
 
-namespace Lab1_v2.TurtleObject
+namespace Lab1.TurtleObject
 {
     public class Turtle
     {

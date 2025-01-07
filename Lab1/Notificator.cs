@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1_v2.Storage;
-using Lab1_v2.TurtleObject;
+using Lab1.Storage;
+using Lab1.TurtleObject;
 
-namespace Lab1_v2.ScreenNotificator
+namespace Lab1.ScreenNotificator
 {
     public class Notificator
     {

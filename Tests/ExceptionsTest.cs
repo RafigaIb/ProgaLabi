@@ -1,5 +1,5 @@
-﻿using Lab1_v2.Commands;
-using Lab1_v2.CommandsInterface;
+﻿using Lab1.Commands;
+using Lab1.CommandsInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestProject1
+namespace Tests
 {
     public class ExceptionsTest
     {
@@ -15,7 +15,7 @@ namespace TestProject1
         public void Split_ShouldThrowIndexOutOfRangeException_WhenElementDoesNotExist()
         {
 
-            string invalidKey = "sdfghjk";
+            string invalidKey = "dykhxdt";
 
             Assert.Throws<IndexOutOfRangeException>(() => invalidKey.Split(' ')[1]);
         }

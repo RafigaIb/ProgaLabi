@@ -1,4 +1,4 @@
-﻿namespace Lab1_v2.Storage;
+﻿namespace Lab1.Storage;
 
 public interface IStorageWriter
 {
