@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Lab3.CommandsInterface;
 
-namespace Lab3.DataBase;
+namespace Lab3.Models;
 
 public class CommandList
 {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lab3.DataBase;
+using Lab3.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lab3.Storage

@@ -2,6 +2,7 @@
 
 
 using Lab3.DataBase;
+using Lab3.Models;
 
 public interface IDataBaseReader
 {

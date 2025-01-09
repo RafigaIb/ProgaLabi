@@ -1,4 +1,5 @@
 ﻿
+using Lab3.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lab3.DataBase;

@@ -1,4 +1,4 @@
-﻿namespace Lab3.DataBase;
+﻿namespace Lab3.Models;
 
 public class CommandHistory
 {
