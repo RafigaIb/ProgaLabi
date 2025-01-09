@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 namespace Lab1.Storage
 {
     public class StorageWriter: IStorageWriter
-    {
+    {/// <summary>
+    /// Класс для записи команд в файл
+    /// </summary>
         private string filePath;
 
         public StorageWriter(string path)
