@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1.CommandsInterface;
-using Lab1.TurtleObject;
+using Lab2.CommandsInterface;
 
-namespace Lab1.Commands
+namespace Lab2.Commands
 {
     public class SetColorCommand : ICommandsWithArgs
     {

@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lab1.Commands;
-using Lab1.CommandsInterface;
-using Lab1.Storage;
+using Lab2.Commands;
+using Lab2.CommandsInterface;
+using Lab2.DataBase;
+using Lab2.Storage;
 
-namespace Lab1.CommandsOperation
+namespace Lab2.CommandsOperation
 {
     public class CommandManager
     {
-        private readonly StorageReader reader;
-        private readonly StorageReader figuresReader;
-
-        public CommandManager(StorageReader reader, StorageReader figuresReader)
+        private DataBaseReader dbReader;
+        
+        public CommandManager(DataBaseReader reader)
         {
-            this.reader = reader;
-            this.figuresReader = figuresReader;
+            dbReader = reader;
             FillDict();
+            
+
         }
 
 
@@ -23,8 +24,8 @@ namespace Lab1.CommandsOperation
 
         private void FillDict()
         {
-            commandsDict.Add(CommandType.History, new HistoryCommand(reader));
-            commandsDict.Add(CommandType.ListFigures, new ListFiguresCommand(figuresReader));
+            commandsDict.Add(CommandType.History, new HistoryCommand(dbReader));
+            commandsDict.Add(CommandType.ListFigures, new ListFiguresCommand(dbReader));
             commandsDict.Add(CommandType.Move, new MoveCommand());
             commandsDict.Add(CommandType.PenUp, new PenUpCommand());
             commandsDict.Add(CommandType.Angle, new AngleCommand());

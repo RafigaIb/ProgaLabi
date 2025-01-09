@@ -1,0 +1,14 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Lab2.CommandsInterface;
+
+namespace Lab2.DataBase;
+
+public class CommandList
+{
+    public int Id { get; set; }
+    public string? Name { get; set; }
+    
+    [NotMapped]
+    public ICommands Command { get; set; }
+    
+}

@@ -1,4 +1,4 @@
-namespace Lab1.CommandsOperation
+namespace Lab2.CommandsOperation
 {
     public enum CommandType
     {

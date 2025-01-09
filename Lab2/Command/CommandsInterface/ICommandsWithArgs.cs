@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1.TurtleObject;
 
-namespace Lab1.CommandsInterface
+namespace Lab2.CommandsInterface
 {
     public interface ICommandsWithArgs : ICommands
     {

@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1.CommandsInterface;
-using Lab1.Storage;
-using Lab1.TurtleObject;
+using Lab2.CommandsInterface;
+using Lab2.DataBase;
+using Lab2.Storage;
 
-namespace Lab1.Commands
+namespace Lab2.Commands
 {
     public class ListFiguresCommand : ICommandsWithoutArgs
     {
-        private StorageReader storageReader;
-        public ListFiguresCommand(StorageReader reader)
+        
+        private DataBaseReader dbReader;
+        public ListFiguresCommand(DataBaseReader reader)
         {
-            storageReader = reader;
+            dbReader = reader;
         }
-        public async void Execute(Turtle turtle)
+
+        public void Execute(Turtle turtle)
         {
-            await storageReader.SetHistoryFiguresAsync();
+            // Console.WriteLine(dbReader.GetFigures());
         }
     }
 }

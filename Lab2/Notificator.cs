@@ -3,56 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1.Storage;
-using Lab1.TurtleObject;
+using Lab2.DataBase;
+using Lab2.Storage;
 
-namespace Lab1.ScreenNotificator
+namespace Lab2.ScreenNotificator
 {
     public class Notificator
     {
-        private StorageReader historyCommandReader;
-        private StorageReader historyFiguresReader;
-
-        public Notificator(StorageReader historyCommandReader, StorageReader historyFiguresReader)
+        
+        private DataBaseReader dbReader;
+        private TurtleStatus? turtleStatus;
+        public Notificator(DataBaseReader reader)
         {
-            this.historyCommandReader = historyCommandReader;
-            this.historyFiguresReader = historyFiguresReader;
+            dbReader = reader;
         }
 
 
-        public void SendNotification(string command, Turtle turtle)
+        public async Task SendNotification(string command)
         {
             if (command == "history")
             {
-                foreach (var comm in historyCommandReader.GetHistory())
+                var commands = await dbReader.GetCommands();
+                foreach (var comm in commands)
                 {
-                    Console.WriteLine("· " + comm);
+                    Console.WriteLine("· " + comm.CommandText);
                 }
                
             }
 
             else if (command == "listfigures")
             {
-                foreach (var figure in historyFiguresReader.GetFigures())
+                var figures = await dbReader.GetFigures();
+                if (figures.Count == 0)
                 {
-                    Console.WriteLine("· " + figure);
+                    Console.WriteLine("empty...");
+                }
+                foreach (var figure in figures)
+                {
+                    Console.WriteLine("· " + figure.FigureType + " " + figure.Parameters);
                 }
             }
 
             else
             {
-                Console.WriteLine("состояние: " +
-                "pos: (" + Math.Round(turtle.GetCoordX(), 2) +
-                "; " + Math.Round(turtle.GetCoordY(), 2) + ")" +
-                ", pen: " + turtle.GetPenCondition() +
-                ", angle: " + turtle.GetAngle() +
-                ", color: " + turtle.GetColor() +
-                ", width: " + turtle.GetWidth());
+                var turtleStatus = await dbReader.GetTurtleStatus();
+                if (turtleStatus != null)
+                {
+                    Console.WriteLine("состояние: " +
+                                      "pos: (" + Math.Round(turtleStatus.Xcoors, 2) +
+                                      "; " + Math.Round(turtleStatus.Ycoors, 2) + ")" +
+                                      ", pen: " + turtleStatus.PenCondition +
+                                      ", angle: " + turtleStatus.Angle +
+                                      ", color: " + turtleStatus.Color +
+                                      ", width: " + turtleStatus.Width);
+                }
+
             }
            
         }
-
-        
-        
     }
 }

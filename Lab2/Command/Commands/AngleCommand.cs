@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab1.CommandsInterface;
-using Lab1.TurtleObject;
+using Lab2.CommandsInterface;
+using Lab2;
 
-namespace Lab1.Commands
+namespace Lab2.Commands
 {
     public class AngleCommand : ICommandsWithArgs
     {
