@@ -1,5 +1,6 @@
 ﻿namespace Lab2.DataBase;
 
+//таблица в базе данных, которая хранит данные о текущем статусе черепашки.
 public class TurtleStatus
 {
     public int Id { get; set; }

@@ -8,6 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lab2.Storage
 {
+    // проверяет, образована ли новая фигура при движении черепашки.
+    // Если фигура завершена, ее координаты сохраняются в базу данных.
+    
+    //Он также взаимодействует с базой данных для получения координат черепашки,
+    //сохранения информации о фигуре и очистки таблицы координат после завершения фигуры.
     public class NewFigureChecker
     {
         private Turtle turtle;
@@ -33,14 +38,16 @@ namespace Lab2.Storage
         public async Task Check()
         {
             var turtleStatus = await dbReader.GetTurtleStatus();
-            if (turtleStatus?.PenCondition == "penDown")
+            if (turtleStatus?.PenCondition == "penDown") // Если перо опущено
             {
+                // Проверяем координаты черепашки
                 var latestStatus = await dbReader.GetTurtleStatus();
                 if (latestStatus != null && 
                     (lastX != latestStatus.Xcoors || lastY != latestStatus.Ycoors))
                 {
-                    await dbWriter.SaveTurtleCoords(turtle);
+                    await dbWriter.SaveTurtleCoords(turtle); // Сохраняем координаты
                     
+                    // Считываем фигуру, если она образована
                     var lastCoords = await dbReader.GetTurtleCoords();
                     if (lastCoords != null)
                     {
@@ -64,6 +71,7 @@ namespace Lab2.Storage
                         lastRow = await context.TurtleStatus.OrderByDescending(t => t.Id).FirstOrDefaultAsync();
                     }
                     
+                    // Определяем, образована ли фигура
                     if (rowCount > 2 && 
                         firstRow != null && lastRow != null &&
                         (firstRow.Xcoors == lastRow.Xcoors && firstRow.Ycoors == lastRow.Ycoors))
@@ -95,9 +103,10 @@ namespace Lab2.Storage
                         param = await CoordArrayToString();
                         if (dbWriter != null)
                         {
+                            // Сохраняем фигуру в базу
                             await dbWriter.SaveFigure(figure, param);
                         }
-                        
+                        // Очищаем координаты
                         await ClearTurtleCoords();
                     }
                 }
@@ -113,14 +122,18 @@ namespace Lab2.Storage
         {
             using (var context = new TurtleContext())
             {
+                // Загружаем все строки из таблицы TurtleCoords
                 var allRows = await context.TurtleCoords.ToListAsync();
+                // Создаем StringBuilder для накопления строки
                 var result = new StringBuilder();
 
+                // Проходим по каждой строке из таблицы
                 foreach (var row in allRows)
                 {
+                    // Добавляем координаты (x; y) в строку
                     result.Append($"({row.xCoord}; {row.yCoord})");
                 }
-                
+                // Возвращаем строку, содержащую все координаты
                 return result.ToString();;
             }
         }
@@ -129,7 +142,9 @@ namespace Lab2.Storage
         {
             using (var context = new TurtleContext())
             {
+                // Удаляем все записи в таблице TurtleCoords
                 context.TurtleCoords.RemoveRange(context.TurtleCoords);
+                // Сохраняем изменения в базе данных
                 await context.SaveChangesAsync();
             }
         }

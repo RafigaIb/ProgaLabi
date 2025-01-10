@@ -2,7 +2,8 @@
 namespace Lab2.DataBase;
 using Microsoft.EntityFrameworkCore;
 
-public class TurtleContext: DbContext
+// управляет объектами(данными), которые будут сохранены в базе данных. 
+public class TurtleContext: DbContext 
 {
     public DbSet<CommandList> CommandLists { get; set; } = null!;
     public DbSet<TurtleStatus> TurtleStatus { get; set; } = null!;
@@ -10,6 +11,7 @@ public class TurtleContext: DbContext
     public DbSet<CommandHistory> CommandHistory {get;set; } = null!;
     public DbSet<Figure> Figure {get;set; } = null!;
     
+    // Настройка подключения к базе данных SQLite
     public TurtleContext(DbContextOptions<TurtleContext> options) : base(options) { }
     public TurtleContext() {}
 
@@ -51,7 +53,8 @@ public class TurtleContext: DbContext
 
                 context.TurtleCoords.Add(initialCoords);
             }
-
+            //  Это гарантирует, что приложение начнет работу с базой данных,
+            // содержащей начальное состояние черепашки.
             context.SaveChanges();
         }
     }

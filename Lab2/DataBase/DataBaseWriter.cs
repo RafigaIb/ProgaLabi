@@ -1,7 +1,7 @@
 ﻿using Lab2.Storage;
 
 namespace Lab2.DataBase;
-
+// отвечает за сохранение данных в базу данных
 public class DataBaseWriter: IDataBaseWriter
 {
     // сохранение статуса черепашки в таблицу "TurtleStatus"
@@ -24,6 +24,7 @@ public class DataBaseWriter: IDataBaseWriter
         }
     }
 
+    // сохраняет координаты черепашки в таблицу TurtleCoords
     public async Task SaveTurtleCoords(Turtle turtle)
     {
         using (var context = new TurtleContext())
@@ -39,7 +40,7 @@ public class DataBaseWriter: IDataBaseWriter
         }
     }
     
-    // сохранение команды в таблицу "Command"
+    // сохранение команды в таблицу "CommandList"
     public async Task SaveCommand(string commandText)
     {
         using (var context = new TurtleContext())  

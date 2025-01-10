@@ -1,5 +1,6 @@
 ﻿namespace Lab2.DataBase;
 
+// таблица для хранения геометрических фигур.
 public class Figure
 {
     public int Id { get; set; }
