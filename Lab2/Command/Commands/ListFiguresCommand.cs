@@ -20,7 +20,7 @@ namespace Lab2.Commands
 
         public void Execute(Turtle turtle)
         {
-            // Console.WriteLine(dbReader.GetFigures());
+            Console.WriteLine(dbReader.GetFigures());
         }
     }
 }
