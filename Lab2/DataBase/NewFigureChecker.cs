@@ -117,17 +117,17 @@ namespace Lab2.Storage
             }
 
         }
-
+        
+        // отвечает за преобразование всех координат черепашки, которые хранятся в таблице TurtleCoords, в строку.
         private async Task<string> CoordArrayToString()
         {
             using (var context = new TurtleContext())
             {
-                // Загружаем все строки из таблицы TurtleCoords
+                
                 var allRows = await context.TurtleCoords.ToListAsync();
-                // Создаем StringBuilder для накопления строки
                 var result = new StringBuilder();
 
-                // Проходим по каждой строке из таблицы
+                
                 foreach (var row in allRows)
                 {
                     // Добавляем координаты (x; y) в строку
@@ -138,7 +138,7 @@ namespace Lab2.Storage
             }
         }
 
-        private async Task ClearTurtleCoords()
+        private async Task ClearTurtleCoords() 
         {
             using (var context = new TurtleContext())
             {
