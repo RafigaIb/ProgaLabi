@@ -1,73 +1,83 @@
 ﻿using Lab2.Storage;
 
-namespace Lab2.DataBase;
-// отвечает за сохранение данных в базу данных
-public class DataBaseWriter: IDataBaseWriter
+namespace Lab2.DataBase
 {
-    // сохранение статуса черепашки в таблицу "TurtleStatus"
-    public async Task SaveTurtleStatus(Turtle turtle)
+    // Класс для сохранения данных в базу данных
+    public class DataBaseWriter : IDataBaseWriter
     {
-        using (var context = new TurtleContext())
+        // Метод для сохранения статуса черепашки в таблицу "TurtleStatus"
+        public async Task SaveTurtleStatus(Turtle turtle)
         {
-            var turtleStatus = new TurtleStatus
+            using (var context = new TurtleContext())
             {
-                Xcoors = turtle.GetCoordX(),
-                Ycoors = turtle.GetCoordY(),
-                Angle = turtle.GetAngle(),
-                Color = turtle.GetColor(),
-                PenCondition = turtle.GetPenCondition(),
-                Width = turtle.GetWidth()
-            };
-            
-            context.TurtleStatus.Add(turtleStatus);
-            await context.SaveChangesAsync();
+                // Создание объекта TurtleStatus на основе данных черепашки
+                var turtleStatus = new TurtleStatus
+                {
+                    Xcoors = turtle.GetCoordX(),
+                    Ycoors = turtle.GetCoordY(),
+                    Angle = turtle.GetAngle(),
+                    Color = turtle.GetColor(),
+                    PenCondition = turtle.GetPenCondition(),
+                    Width = turtle.GetWidth()
+                };
+                
+                // Добавление нового статуса черепашки в таблицу TurtleStatus
+                context.TurtleStatus.Add(turtleStatus);
+                await context.SaveChangesAsync();  // Сохранение изменений в базе данных
+            }
         }
-    }
 
-    // сохраняет координаты черепашки в таблицу TurtleCoords
-    public async Task SaveTurtleCoords(Turtle turtle)
-    {
-        using (var context = new TurtleContext())
+        // Метод для сохранения координат черепашки в таблицу "TurtleCoords"
+        public async Task SaveTurtleCoords(Turtle turtle)
         {
-            var turtleCoords = new TurtleCoords
+            using (var context = new TurtleContext())
             {
-                xCoord = turtle.GetCoordX(),
-                yCoord = turtle.GetCoordY()
-            };
-            
-            context.TurtleCoords.Add(turtleCoords);
-            await context.SaveChangesAsync();
+                // Создание объекта TurtleCoords для хранения координат черепашки
+                var turtleCoords = new TurtleCoords
+                {
+                    xCoord = turtle.GetCoordX(),
+                    yCoord = turtle.GetCoordY()
+                };
+                
+                // Добавление координат в таблицу TurtleCoords
+                context.TurtleCoords.Add(turtleCoords);
+                await context.SaveChangesAsync();  // Сохранение изменений в базе данных
+            }
         }
-    }
-    
-    // сохранение команды в таблицу "CommandList"
-    public async Task SaveCommand(string commandText)
-    {
-        using (var context = new TurtleContext())  
+        
+        // Метод для сохранения команды в таблицу "CommandList"
+        public async Task SaveCommand(string commandText)
         {
-            var command = new CommandHistory
+            using (var context = new TurtleContext())
             {
-                CommandText = commandText,
-            };
+                // Создание объекта CommandHistory для хранения текста команды
+                var command = new CommandHistory
+                {
+                    CommandText = commandText,
+                };
 
-            context.CommandHistory.Add(command);
-            await context.SaveChangesAsync();  // Сохраняем изменения в базу данных
+                // Добавление команды в таблицу CommandHistory
+                context.CommandHistory.Add(command);
+                await context.SaveChangesAsync();  // Сохранение изменений в базе данных
+            }
         }
-    }
-    
-    // сохранение фигуры в таблицу "Figure"
-    public async Task SaveFigure(string figureType, string parameters)
-    {
-        using (var context = new TurtleContext())
+        
+        // Метод для сохранения фигуры в таблицу "Figure"
+        public async Task SaveFigure(string figureType, string parameters)
         {
-            var figure = new Figure
+            using (var context = new TurtleContext())
             {
-                FigureType = figureType,
-                Parameters = parameters,
-            };
+                // Создание объекта Figure для хранения данных о фигуре
+                var figure = new Figure
+                {
+                    FigureType = figureType,
+                    Parameters = parameters,
+                };
 
-            context.Figure.Add(figure);
-            await context.SaveChangesAsync(); // Сохраняем изменения в базу данных
+                // Добавление фигуры в таблицу Figure
+                context.Figure.Add(figure);
+                await context.SaveChangesAsync();  // Сохранение изменений в базе данных
+            }
         }
     }
 }

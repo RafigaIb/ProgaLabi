@@ -1,122 +1,121 @@
-﻿using Lab2.CommandsInterface;
-using Lab2.CommandsOperation;
-using Lab2.ScreenNotificator;
-using Lab2.Storage;
-using System.Linq;
-using Lab2;
-using Lab2.DataBase;
+﻿using Lab2.CommandsInterface;  // Использование интерфейсов команд
+using Lab2.CommandsOperation;  // Операции с командами
+using Lab2.ScreenNotificator;  // Уведомления на экран
+using Lab2.Storage;  // Работа с хранилищем данных
+using System.Linq;  // Использование LINQ для работы с коллекциями
+using Lab2;  // Основное пространство имен
+using Lab2.DataBase;  // Работа с базой данных
 
 internal class Program
 {
-    // файлы для записи команд черепашки
+    // Константа для выхода из игры
     private const string Exit = "exit";
 
     private static async Task Main(string[] args)
     {
-        //инициализация вспомогательных объектов
-        var turtle = new Turtle();
-        var invoker = new CommandInvoker(turtle);
+        // Инициализация объектов для игры
+        var turtle = new Turtle();  // Черепашка (основной объект)
+        var invoker = new CommandInvoker(turtle);  // Инвокер для выполнения команд
         
-        var dbReader = new DataBaseReader();
-        var dbWriter = new DataBaseWriter();
-        var dbManager = new CommandManager(dbReader);
-        var dbNotificator = new Notificator(dbReader);
-        var dbChecker = new NewFigureChecker(turtle, dbWriter, dbReader);
+        var dbReader = new DataBaseReader();  // Чтение из базы данных
+        var dbWriter = new DataBaseWriter();  // Запись в базу данных
+        var dbManager = new CommandManager(dbReader);  // Менеджер команд для определения команд
+        var dbNotificator = new Notificator(dbReader);  // Отправка уведомлений
+        var dbChecker = new NewFigureChecker(turtle, dbWriter, dbReader);  // Проверка на новые фигуры
         
-        // пересоздание базы данных
+        // Пересоздание базы данных
         await using (var context = new TurtleContext())
         {
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-            context.InitializeDatabase();
+            context.Database.EnsureDeleted();  // Удаление базы данных, если она существует
+            context.Database.EnsureCreated();  // Создание новой базы данных
+            context.InitializeDatabase();  // Инициализация базы данных
         }
         
-        
-        
-        
-        // список команда без аргументов и с аргументами
+        // Список команд без аргументов
         var commWithoutArgsList = new List<string>() { "penup", "pendown", "history", "listfigures" };
 
-        // текст введенной пользователем команды
+        // Текст, введенный пользователем
         string userCommand;
 
         Console.WriteLine("-------Welcome to the TURTLEGAME-------");
         Console.WriteLine();
         Console.WriteLine("Command list: \n" +
-                          "- move [number]\n" +
-                          "- angle [number]\n" +
-                          "- penup\n" +
-                          "- pendown\n" +
-                          "- history\n" +
-                          "- listfigures\n" +
-                          "- color [string]\n" +
-                          "- width [number]");
+                          "- move [number]\n" +  // Команда для движения
+                          "- angle [number]\n" +  // Команда для изменения угла
+                          "- penup\n" +  // Команда для поднятия пера
+                          "- pendown\n" +  // Команда для опускания пера
+                          "- history\n" +  // Команда для просмотра истории команд
+                          "- listfigures\n" +  // Команда для просмотра списка фигур
+                          "- color [string]\n" +  // Команда для изменения цвета
+                          "- width [number]");  // Команда для изменения ширины линии
         Console.WriteLine();
         Console.WriteLine("Choose the command from list to START the game");
         Console.WriteLine("To leave the game, enter - exit");
 
-
+        // Цикл, который работает до выхода из игры
         while (true)
         {
             try
             {
-                userCommand = Console.ReadLine();
+                userCommand = Console.ReadLine();  // Считываем команду пользователя
 
+                // Проверка на команду выхода из игры
                 if (userCommand == Exit)
                 {
-                    break;
+                    break;  // Прерываем цикл, если введена команда выхода
                 }
 
+                // Если команда без аргументов
                 if (commWithoutArgsList.Contains(userCommand))
                 {
+                    // Определяем команду и выполняем её
                     ICommandsWithoutArgs command = (ICommandsWithoutArgs)dbManager.DefineCommand(userCommand);
-                    invoker.Invoke(command);
-                    await dbWriter.SaveCommand(userCommand);
+                    invoker.Invoke(command);  // Выполнение команды
+                    await dbWriter.SaveCommand(userCommand);  // Сохранение команды в базе данных
                 }
                 else
                 {
+                    // Если команда с аргументами
                     ICommandsWithArgs command = (ICommandsWithArgs)dbManager.DefineCommand(userCommand.Split(' ')[0]);
-                    invoker.Invoke(command, userCommand.Split(' ')[1]);
-                    await dbWriter.SaveCommand(userCommand);
+                    invoker.Invoke(command, userCommand.Split(' ')[1]);  // Выполнение команды с аргументом
+                    await dbWriter.SaveCommand(userCommand);  // Сохранение команды в базе данных
                 }
 
-                await dbWriter.SaveTurtleStatus(turtle);
-                // вывод соообщение после испольнения команды
+                await dbWriter.SaveTurtleStatus(turtle);  // Сохранение текущего состояния черепашки
+                // Отправка уведомления после выполнения команды
                 await dbNotificator.SendNotification(userCommand);
 
-                // проверка на образование новой фигуры
+                // Проверка на создание новой фигуры
                 await dbChecker.Check();
             }
 
-            // возможные ошибки в ходе выполнения
+            // Обработка возможных ошибок
             catch (InvalidCastException ex)
             {
-                Console.WriteLine("Invalid argument");
+                Console.WriteLine("Invalid argument");  // Некорректный аргумент
             }
 
             catch (IndexOutOfRangeException ex)
             {
-                Console.WriteLine("Invalid argument, or argument doesn`t exist");
+                Console.WriteLine("Invalid argument, or argument doesnt exist");  // Аргумент не существует
             }
 
             catch (KeyNotFoundException ex)
             {
-                Console.WriteLine("Invalid command, or command doesn`t exist");
+                Console.WriteLine("Invalid command, or command doesnt exist");  // Команда не найдена
             }
 
             catch (FormatException ex)
             {
-                Console.WriteLine("Invalid argument, please try again or check command list");
+                Console.WriteLine("Invalid argument, please try again or check command list");  // Некорректный формат аргумента
             }
             
             catch (NullReferenceException ex)
             {
-                Console.WriteLine("empty...");
+                Console.WriteLine("empty...");  // Пустое значение (null)
             }
         }
 
-        Console.WriteLine("GAME END");
-
-        ;
+        Console.WriteLine("GAME END");  // Конец игры
     }
 }

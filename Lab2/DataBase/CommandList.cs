@@ -1,14 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Lab2.CommandsInterface;
 
-namespace Lab2.DataBase;
-// таблица для хранения истории команд
-public class CommandList
+namespace Lab2.DataBase
 {
-    public int Id { get; set; }
-    public string? Name { get; set; }
-    
-    [NotMapped]
-    public ICommands Command { get; set; }
-    
+    // Класс для хранения истории команд
+    public class CommandList
+    {
+        // Идентификатор записи в базе данных
+        public int Id { get; set; }
+        
+        // Название команды (например, "move", "penup", и т.д.)
+        public string? Name { get; set; }
+        
+        // Свойство для хранения команды, но оно не будет отображаться в базе данных
+        [NotMapped]
+        public ICommands Command { get; set; }
+    }
 }

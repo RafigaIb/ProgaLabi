@@ -1,9 +1,10 @@
-﻿namespace Lab2.DataBase;
-
-// таблица для хранения геометрических фигур.
-public class Figure
+﻿namespace Lab2.DataBase
 {
-    public int Id { get; set; }
-    public string FigureType { get; set; }
-    public string Parameters { get; set; }
+    // Класс, представляющий таблицу для хранения геометрических фигур.
+    public class Figure
+    {
+        public int Id { get; set; }            // Уникальный идентификатор фигуры
+        public string FigureType { get; set; }  // Тип фигуры (например, "треугольник", "квадрат", и т.д.)
+        public string Parameters { get; set; }  // Параметры фигуры, представленные строкой (например, координаты точек)
+    }
 }

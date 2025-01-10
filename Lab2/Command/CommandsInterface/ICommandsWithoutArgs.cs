@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace Lab2.CommandsInterface
 {
+    // Интерфейс для команд, которые не принимают аргументов
     public interface ICommandsWithoutArgs : ICommands
     {
-        public void Execute(Turtle turtle);
+        // Метод для выполнения команды без аргументов
+        void Execute(Turtle turtle);
     }
 }
