@@ -18,7 +18,7 @@ namespace Lab2.Commands
 
         public void Execute(Turtle turtle)
         {
-            // Console.WriteLine(dbReader.GetCommands());
+            Console.WriteLine(dbReader.GetCommands());
         }
     }
 }
