@@ -9,19 +9,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lab3.Storage
 {
+    // Класс для проверки, образована ли новая фигура черепахой
     public class NewFigureChecker
     {
-        private Turtle turtle;
-        private double lastX;
-        private double lastY;
-        private string figure;
-        private IDataBaseWriter dbWriter;
-        private IDataBaseReader dbReader;
-        private string param;
-        private int rowCount;
-        private TurtleStatus firstRow;
-        private TurtleStatus lastRow;
+        private Turtle turtle; // Объект черепахи
+        private double lastX; // Последняя координата X
+        private double lastY; // Последняя координата Y
+        private string figure; // Тип фигуры, которая будет образована
+        private IDataBaseWriter dbWriter; // Для записи данных в базу данных
+        private IDataBaseReader dbReader; // Для чтения данных из базы данных
+        private string param; // Параметры фигуры в виде строки
+        private int rowCount; // Количество записей в таблице координат черепахи
+        private TurtleStatus firstRow; // Первая запись в таблице TurtleStatus
+        private TurtleStatus lastRow; // Последняя запись в таблице TurtleStatus
 
+        // Конструктор, который принимает черепаху, объект для записи и объект для чтения данных из базы
         public NewFigureChecker(Turtle turtle, IDataBaseWriter writer, IDataBaseReader reader)
         {
             this.turtle = turtle;
@@ -31,17 +33,25 @@ namespace Lab3.Storage
             dbReader = reader;
         }
 
+        // Метод для проверки, образована ли новая фигура
         public async Task Check()
         {
+            // Чтение текущего статуса черепахи
             var turtleStatus = await dbReader.GetTurtleStatus();
+
+            // Если перо черепахи опущено (penDown), продолжаем проверку
             if (turtleStatus?.PenCondition == "penDown")
             {
+                // Чтение последнего статуса черепахи
                 var latestStatus = await dbReader.GetTurtleStatus();
+                
+                // Если координаты изменились, сохраняем новые координаты
                 if (latestStatus != null && 
                     (lastX != latestStatus.Xcoors || lastY != latestStatus.Ycoors))
                 {
                     await dbWriter.SaveTurtleCoords(turtle);
                     
+                    // Обновление последних координат
                     var lastCoords = await dbReader.GetTurtleCoords();
                     if (lastCoords != null)
                     {
@@ -49,28 +59,26 @@ namespace Lab3.Storage
                         lastY = lastCoords.yCoord;
                     }
 
+                    // Подсчёт количества записей в таблице координат
                     using (var context = new TurtleContext())
                     {
                         rowCount = await context.TurtleCoords.CountAsync();
                     }
                     
+                    // Чтение первой и последней записи из таблицы статусов черепахи
                     using (var context = new TurtleContext())
                     {
-                        // Получаем первую запись в таблице 
-                        // IQueryable<TurtleStatus> firstRowIQuer = context.TurtleStatus;
                         firstRow = await context.TurtleStatus.OrderBy(t => t.Id).FirstOrDefaultAsync();
-    
-                        // Получаем последнюю запись в таблице 
-                        // IQueryable<TurtleStatus> lastRowIQuer = context.TurtleStatus;
                         lastRow = await context.TurtleStatus.OrderByDescending(t => t.Id).FirstOrDefaultAsync();
                     }
-                    
+
+                    // Проверка, образована ли фигура (если количество точек > 2 и первые и последние координаты совпадают)
                     if (rowCount > 2 && 
                         firstRow != null && lastRow != null &&
                         (firstRow.Xcoors == lastRow.Xcoors && firstRow.Ycoors == lastRow.Ycoors))
                     {
-
-                        switch (rowCount-1)
+                        // Определение типа фигуры по количеству точек
+                        switch (rowCount - 1)
                         {
                             case 3:
                                 figure = "треугольник";
@@ -87,51 +95,60 @@ namespace Lab3.Storage
                             case 7:
                                 figure = "семиугольник";
                                 break;
-
                         }
 
+                        // Вывод сообщения о том, что фигура образована
                         Console.Write("Образована новая фигура: " + figure);
                         Console.WriteLine();
 
+                        // Получаем строковое представление координат
                         param = await CoordArrayToString();
+
+                        // Сохраняем информацию о фигуре в базу данных
                         if (dbWriter != null)
                         {
                             await dbWriter.SaveFigure(figure, param);
                         }
                         
+                        // Очищаем таблицу координат после сохранения фигуры
                         await ClearTurtleCoords();
                     }
                 }
             }
             else
             {
+                // Если перо не опущено, очищаем таблицу координат
                 await ClearTurtleCoords();
             }
-
         }
 
+        // Метод для преобразования координат в строковое представление
         private async Task<string> CoordArrayToString()
         {
             using (var context = new TurtleContext())
             {
+                // Получаем все записи координат черепахи
                 var allRows = await context.TurtleCoords.ToListAsync();
                 var result = new StringBuilder();
 
+                // Строим строку с координатами
                 foreach (var row in allRows)
                 {
                     result.Append($"({row.xCoord}; {row.yCoord})");
                 }
                 
-                return result.ToString();;
+                return result.ToString(); // Возвращаем строку с координатами
             }
         }
 
+        // Метод для очистки таблицы координат
         private async Task ClearTurtleCoords()
         {
             using (var context = new TurtleContext())
             {
+                // Удаляем все записи из таблицы координат
                 context.TurtleCoords.RemoveRange(context.TurtleCoords);
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(); // Сохраняем изменения в базе данных
             }
         }
     }

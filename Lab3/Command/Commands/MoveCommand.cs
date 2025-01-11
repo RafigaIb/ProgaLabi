@@ -7,12 +7,14 @@ using Lab3.CommandsInterface;
 
 namespace Lab3.Commands
 {
+    // Команда для перемещения черепашки на заданное расстояние
     public class MoveCommand : ICommandsWithArgs
     {
-
+        // Метод Execute перемещает черепашку в соответствии с переданным аргументом
+        // str — это строковое представление расстояния для перемещения
         public void Execute(Turtle turtle, string str)
         {
-
+            // Вычисляем новые координаты для X и Y, используя угол черепашки
             turtle.SetCoordx(double.Parse(str)
                 * Math.Sin(turtle.GetAngle() * (Math.PI / 180)));
 

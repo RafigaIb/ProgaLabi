@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Lab3.CommandsInterface
 {
+    // Интерфейс для всех команд
     public interface ICommands
     {
-        
+        // Этот интерфейс не содержит методов и служит базой для всех команд в системе.
     }
 }

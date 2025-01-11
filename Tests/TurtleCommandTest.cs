@@ -28,12 +28,12 @@ namespace Tests
             double expectedX = expX;
             double expectedY = expY;
 
-            //��������
+            
             moveCommand.Execute(turtle, command);
             double actualX = turtle.GetCoordX();
             double actualY = turtle.GetCoordY();
 
-            //��������
+            
             Assert.Equal(expectedX, actualX);
             Assert.Equal(expectedY, actualY);
 
