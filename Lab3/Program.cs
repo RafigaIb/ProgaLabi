@@ -14,12 +14,20 @@ public class Program
 
     private static async Task Main(string[] args)
     {
+        try
+        {
+            new TurtleContext().InitializeDatabase();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
         var builder = WebApplication.CreateBuilder(args);
         builder.Environment.EnvironmentName = Environments.Development;
 
        
         builder.Services.AddDbContext<TurtleContext>(options =>
-            options.UseSqlite("Data Source=my2.db")
+            options.UseSqlite("Data Source=my5.db")
                 .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information));
 
         builder.Services.AddScoped<IDataBaseWriter, DataBaseWriter>();

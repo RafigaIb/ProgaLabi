@@ -42,7 +42,7 @@ public class TurtleContext : DbContext
         if (!optionsBuilder.IsConfigured)
         {
             // Используем SQLite с указанием строки подключения.
-            optionsBuilder.UseSqlite("Data Source=my2.db");
+            optionsBuilder.UseSqlite("Data Source=my5.db");
         }
     }
 
