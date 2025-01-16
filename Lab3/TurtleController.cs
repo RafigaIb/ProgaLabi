@@ -45,22 +45,22 @@ public class TurtleController : ControllerBase
             // Если команда не требует параметра (команды без аргументов)
             if (string.IsNullOrEmpty(commandRequest.Parameter))
             {
-                var command = (ICommandsWithoutArgs)dbManager.DefineCommand(commandRequest.Command);
+                var command = (ICommandsWithoutArgs)dbManager.DefineCommand(commandRequest.Command); // Приведение к типу ICommandsWithoutArgs
                 invoker.Invoke(command);  // Выполнение команды без параметров
             }
             // Если команда требует параметра (команды с аргументами)
             else
             {
-                var command = (ICommandsWithArgs)dbManager.DefineCommand(commandRequest.Command);
+                var command = (ICommandsWithArgs)dbManager.DefineCommand(commandRequest.Command); // Приведение к типу ICommandsWithArgs
                 invoker.Invoke(command, commandRequest.Parameter);  // Выполнение команды с параметром
             }
 
             // Сохранение команды в базу данных для истории
             await dbWriter.SaveCommand($"{commandRequest.Command} {commandRequest.Parameter}");
-            
+        
             // Сохранение текущего состояния черепахи в базу данных
             await dbWriter.SaveTurtleStatus(turtle);
-            
+        
             // Проверка, не образовалась ли новая фигура в результате команды
             await dbChecker.Check();
 
@@ -73,6 +73,7 @@ public class TurtleController : ControllerBase
             return BadRequest(new { Error = ex.Message });
         }
     }
+
 
     // HTTP GET метод для получения статуса черепахи
     [HttpGet]
