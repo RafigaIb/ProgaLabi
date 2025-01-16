@@ -80,6 +80,6 @@ public class TurtleController : ControllerBase
     public IActionResult GetStatus()
     {
         // Возвращаем сообщение о текущем статусе черепахи
-        return Ok("Статус черепашки");
+        return Ok("Статус черепашки x: " + turtle.GetCoordX() + " y: " + turtle.GetCoordY());
     }
 }
