@@ -3,64 +3,105 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lab3.DataBase;
 
-// Класс контекста базы данных, который используется для взаимодействия с базой данных через Entity Framework.
+/// <summary>
+/// Контекст базы данных для взаимодействия с SQLite через Entity Framework.
+/// </summary>
 public class TurtleContext : DbContext
 {
     // Таблицы, которые будут использоваться в базе данных.
-    public DbSet<CommandList> CommandLists { get; set; } = null!; // Таблица для хранения списка команд
-    public DbSet<TurtleStatus> TurtleStatus { get; set; } = null!; // Таблица для хранения статусов черепахи (позиция, угол, цвет, состояние пера)
-    public DbSet<TurtleCoords> TurtleCoords { get; set; } = null!; // Таблица для хранения координат черепахи
-    public DbSet<CommandHistory> CommandHistory { get; set; } = null!; // Таблица для хранения истории команд
-    public DbSet<Figure> Figure { get; set; } = null!; // Таблица для хранения данных о фигурах, образованных черепахой
+    public DbSet<CommandList> CommandLists { get; set; } = null!; // Таблица для списка команд
+    public DbSet<TurtleStatus> TurtleStatus { get; set; } = null!; // Таблица для статусов черепахи
+    public DbSet<TurtleCoords> TurtleCoords { get; set; } = null!; // Таблица для координат черепахи
+    public DbSet<CommandHistory> CommandHistory { get; set; } = null!; // Таблица для истории команд
+    public DbSet<Figure> Figure { get; set; } = null!; // Таблица для данных о фигурах
 
-    // Конструктор, принимающий параметры конфигурации базы данных
+    /// <summary>
+    /// Конструктор с параметрами для конфигурации контекста.
+    /// </summary>
     public TurtleContext(DbContextOptions<TurtleContext> options) : base(options) { }
 
-    // Конструктор по умолчанию (используется в InitializeDatabase для инициализации базы)
-    public TurtleContext() {}
-
-    // Настройка подключения к базе данных SQLite.
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    /// <summary>
+    /// Конструктор по умолчанию для инициализации базы данных.
+    /// </summary>
+    public TurtleContext()
     {
-        // Указание строки подключения к базе данных SQLite. Можно перенести строку подключения в файл конфигурации.
-        optionsBuilder.UseSqlite("Data Source=my.db");
+        try
+        {
+            InitializeDatabase();
+        }catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 
-    // Метод для инициализации базы данных, если она пуста
+    /// <summary>
+    /// Настройка подключения к базе данных SQLite.
+    /// </summary>
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
+        {
+            // Используем SQLite с указанием строки подключения.
+            optionsBuilder.UseSqlite("Data Source=my2.db");
+        }
+    }
+
+    /// <summary>
+    /// Настройка моделей через Fluent API.
+    /// </summary>
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Настройка таблицы CommandHistory.
+        modelBuilder.Entity<CommandHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id); // Первичный ключ
+            entity.Property(e => e.CommandText)
+                  .IsRequired()
+                  .HasMaxLength(255); // Ограничение на длину текста команды
+        });
+
+        // Другие настройки можно добавить аналогично.
+    }
+
+    /// <summary>
+    /// Метод для инициализации базы данных с начальными данными.
+    /// </summary>
     public void InitializeDatabase()
     {
-        // Используется для первоначальной настройки базы данных (например, добавление начальных данных)
-        using (var context = new TurtleContext())
+        // Инициализируем базу данных только если она пуста.
+        if (Database.EnsureCreated())
         {
-            // Проверяем, есть ли записи в таблице TurtleStatus, если нет, добавляем начальные значения
+            using var context = new TurtleContext();
+
+            // Добавляем начальный статус черепахи, если таблица пуста.
             if (!context.TurtleStatus.Any())
             {
                 var initialStatus = new TurtleStatus
                 {
-                    Xcoors = 0,           // Начальная координата X (черепаха начинает с позиции 0,0)
-                    Ycoors = 0,           // Начальная координата Y
-                    PenCondition = "down",// Начальное состояние пера (перо опущено)
-                    Angle = 0,            // Начальный угол (0 градусов)
-                    Color = "black",      // Начальный цвет пера
-                    Width = 1             // Начальная ширина пера
+                    Xcoors = 0,
+                    Ycoors = 0,
+                    PenCondition = "down",
+                    Angle = 0,
+                    Color = "black",
+                    Width = 1
                 };
-
-                context.TurtleStatus.Add(initialStatus); // Добавляем начальный статус в таблицу
+                context.TurtleStatus.Add(initialStatus);
             }
 
-            // Проверяем, есть ли записи в таблице TurtleCoords, если нет, добавляем начальные координаты
+            // Добавляем начальные координаты черепахи, если таблица пуста.
             if (!context.TurtleCoords.Any())
             {
                 var initialCoords = new TurtleCoords
                 {
-                    xCoord = 0,           // Начальная координата X
-                    yCoord = 0            // Начальная координата Y
+                    xCoord = 0,
+                    yCoord = 0
                 };
-
-                context.TurtleCoords.Add(initialCoords); // Добавляем начальные координаты в таблицу
+                context.TurtleCoords.Add(initialCoords);
             }
 
-            // Сохраняем изменения в базе данных
+            // Сохраняем изменения в базе данных.
             context.SaveChanges();
         }
     }

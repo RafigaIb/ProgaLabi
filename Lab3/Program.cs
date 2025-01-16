@@ -10,48 +10,44 @@ using Microsoft.Extensions.Hosting;
 
 public class Program
 {
-    private const string Exit = "exit"; // Константа для команды выхода
+    private const string Exit = "exit";
 
-    // Точка входа в приложение
     private static async Task Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);  // Создание билдер для веб-приложения
-        builder.Environment.EnvironmentName = Environments.Development;  // Установка окружения разработки
+        var builder = WebApplication.CreateBuilder(args);
+        builder.Environment.EnvironmentName = Environments.Development;
 
-        // Регистрация сервисов в DI контейнере
-        // Настройка контекста базы данных с использованием SQLite
+       
         builder.Services.AddDbContext<TurtleContext>(options =>
-            options.UseSqlite("Data Source=my.db"));
+            options.UseSqlite("Data Source=my2.db")
+                .LogTo(Console.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information));
 
-        // Регистрация зависимостей для работы с командным менеджером и историей команд
-        builder.Services.AddSingleton<CommandManager>();  // Командный менеджер для управления командами
-        builder.Services.AddSingleton<CommandInvoker>();  // Инвокер команд для их выполнения
-        builder.Services.AddSingleton<IDataBaseWriter, DataBaseWriter>();  // Реализация для записи данных в базу
-        builder.Services.AddSingleton<IDataBaseReader, DataBaseReader>();  // Реализация для чтения данных из базы
-        builder.Services.AddSingleton<Notificator>();  // Сервис для отправки уведомлений о состоянии черепахи и историях
-        builder.Services.AddSingleton<Turtle>();  // Объект черепахи, который выполняет команды
-        builder.Services.AddSingleton<NewFigureChecker>();  // Проверка на создание новых фигур черепахой
+        builder.Services.AddScoped<IDataBaseWriter, DataBaseWriter>();
+        builder.Services.AddScoped<IDataBaseReader, DataBaseReader>();
+        builder.Services.AddSingleton<CommandManager>();
+        builder.Services.AddSingleton<CommandInvoker>();
+        builder.Services.AddSingleton<Notificator>();
+        builder.Services.AddSingleton<Turtle>();
+        builder.Services.AddSingleton<NewFigureChecker>();
 
-        // Добавление сервисов для создания API (Web API)
-        builder.Services.AddControllers();  // Добавление поддержки контроллеров
-        builder.Services.AddEndpointsApiExplorer();  // Автоматическая генерация документации для API
-        builder.Services.AddSwaggerGen();  // Генерация Swagger документации для API
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
-        var app = builder.Build();  // Строим приложение
+        var app = builder.Build();
 
-        // Swagger доступен в разработке для документации API
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();  // Включаем Swagger
+            app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");  // Указываем путь к Swagger JSON
-                c.RoutePrefix = "";  // Убираем префикс из URL для Swagger UI
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = "";
             });
         }
 
-        app.UseAuthorization();  // Включаем авторизацию (если необходима в будущем)
-        app.MapControllers();  // Маппинг контроллеров (обработка запросов API)
-        app.Run();  // Запуск приложения
+        app.UseAuthorization();
+        app.MapControllers();
+        app.Run();
     }
 }
